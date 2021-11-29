@@ -1,0 +1,180 @@
+package tugas.dnc.asd;
+import java.util.*;
+public class DNCCLOSESTPAIR {
+    
+    public static void main(String[] args) {
+        List<Point> list = new ArrayList<>();
+        Scanner in = new Scanner(System.in);
+        
+        int x, y = 0;
+        int B, C;
+            
+        Random randomGenerator = new Random();
+        
+        String pilihan[] = {"1", "01", "random"};
+        List<String> pilihannya = Arrays.asList(pilihan);
+        
+        String pilihan1[] = {"2", "02", "user"};
+        List<String> pilihannya1 = Arrays.asList(pilihan1);
+        
+        System.out.print("Hai, Masukkan Pilihan mu\n 1. Ingin Random Number\n 2. Ingin Inputan User\nInputan Anda : ");
+        String pilihanmu = in.nextLine().toLowerCase();
+        
+        if(pilihannya.contains(pilihanmu)){   
+            //RANDOM VALUE SECTION
+            Point[] A = new Point[1000];
+            System.out.println();
+            for (B = 0; B<A.length; B++){
+                x = randomGenerator.nextInt(3000); // 0-2999
+                System.out.println("Titik X ke " +(B+1) + " : " + x);
+                for (C = 0; C<=B;C++){
+                    y = randomGenerator.nextInt(3000);
+                    System.out.println("Titik Y ke " +(B+1) + " : "  + y);
+                    break;
+                }
+                A[B] = new Point(x, y);
+                list.add(A[B]);
+                System.out.println();
+            }
+            mindistance(list);
+            System.out.println("Pasangan p terdekat adalah ("+titik1.x+","+titik1.y+") ("+titik2.x+","+titik2.y+") "
+                    + "\ndan jarak antara poin yang terdekat tersebut adalah "+ min);
+        }
+        else if (pilihannya1.contains(pilihanmu)){
+            //USER VALUE SECTION
+            System.out.println("\nMasukkan Panjang Array");
+            int d = in.nextInt();
+            if(d == 1) d=2;
+            Point[] A = new Point[d];
+            for (B = 0; B<A.length; B++){
+                System.out.print("Titik X ke " +(B+1) + " : ");
+                x = in.nextInt();
+                for (C = 0; C<=B;C++){
+                    System.out.print("Titik Y ke " +(B+1) + " : " );
+                    y = in.nextInt();
+                    break;
+                }
+                    A[B] = new Point(x, y); 
+                    list.add(A[B]);
+                    System.out.println();
+            }
+
+            //bagian menampilkan output
+            mindistance(list);
+            System.out.println("Pasangan p terdekat adalah ("+titik1.x+","+titik1.y+") ("+titik2.x+","+titik2.y+") "
+                + "\ndan jarak antara poin yang terdekat tersebut adalah "+ min);
+        }
+        else main(null);
+        }
+        
+    static double min = Integer.MAX_VALUE; 
+    static Point titik1 = null ,titik2 = null;
+    
+    public static class Point {
+        private final int x;
+        private final int y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static void mindistance(List<Point> list){
+        int n = list.size();
+        Point[] pointsbyX = new Point[n];
+            
+        for(int i=0;i<n;i++){
+            pointsbyX[i] = list.get(i);
+        }
+        
+        Arrays.sort(pointsbyX, new ComparatorImpl());
+            for(int i=0;i<n-1;i++){
+                if(pointsbyX[i]==pointsbyX[i+1]){
+                    min = 0;
+                    titik1 = pointsbyX[i];
+                    titik2 = pointsbyX[i+1];
+                    break;
+                }
+            }
+            Point[] pointsbyY = new Point[n];
+            System.arraycopy(pointsbyX, 0, pointsbyY, 0, n);
+            Point[] aux = new Point[n];
+            closest(pointsbyX, pointsbyY, aux, 0, n-1);
+        }
+
+    private static double closest(Point[] pointsByX, Point[] pointsByY, Point[] aux, int lo, int hi) {
+        if (hi <= lo) return Double.POSITIVE_INFINITY; //NaN
+        int mid = lo + (hi - lo) / 2;
+        Point median = pointsByX[mid];
+
+        // compute closest pair with both endpoints in left subarray or both in right subarray
+        double delta1 = closest(pointsByX, pointsByY, aux, lo, mid); // 1 - 5
+        double delta2 = closest(pointsByX, pointsByY, aux, mid+1, hi); // 6 - 10
+        double delta = Math.min(delta1, delta2);
+
+        // merge back so that pointsByY[lo..hi] are sorted by y-coordinate
+        merge(pointsByY, aux, lo, mid, hi);
+
+        // aux[0..m-1] = sequence of points closer than delta, sorted by y-coordinate
+        int m = 0;
+        for (int i = lo; i <= hi; i++) { //SAMPAI NILAINYA TIDAK LEBIH DARI hi
+            if (Math.abs(pointsByY[i].x - median.x) < delta)
+                aux[m++] = pointsByY[i];
+        }
+
+        // compare each point to its neighbors with y-coordinate closer than delta
+        for (int i = 0; i < m; i++) {
+            // a geometric packing argument shows that this loop iterates at most 7 times
+            for (int j = i+1; (j < m) && (aux[j].y - aux[i].y < delta); j++) {
+                double distance = getDistance(aux[i], aux[j]);
+                if (distance < delta) {
+                    delta = distance;
+                    if (distance < min) {
+                        min = delta;
+                        titik1 = aux[i];
+                        titik2 = aux[j];
+                    }
+                }
+            }
+        }
+        return delta;
+    }
+
+    private static void merge(Point[] a, Point[] aux, int lo, int mid, int hi) {
+        // copy to aux[]
+        for (int k = lo; k <= hi; k++) {
+            aux[k] = a[k];
+        }
+
+        // merge back to a[]
+        int i = lo, j = mid+1;
+        for (int k = lo; k <= hi; k++) {
+            if (i > mid){
+                a[k] = aux[j++];
+            }
+            else{
+                a[k] = aux[i++];
+            }
+        }
+    }
+
+    public static double getDistance(Point a, Point b){ 
+            int x = a.x-b.x;
+            int y = a.y-b.y;
+        return Math.sqrt(x*x+y*y); // (X^2 + Y^2)^2 
+    }
+
+    private static class ComparatorImpl implements Comparator<Point> {
+
+        @Override
+        public int compare(Point o1, Point o2) {
+            if(o1.x!=o2.x){
+                return o1.x-o2.x;
+            }
+            else{
+                return o1.y-o2.y;
+            }
+        }
+    }
+}
