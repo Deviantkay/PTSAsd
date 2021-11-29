@@ -12,16 +12,47 @@ public class BFCLOSESTPAIR {
         int B, C;
         Random randomGenerator = new Random();
         
-        String pilihan[] = {"1", "01", "random"};
+        String benchmark[] = {"1", "01", "benchmark", "uji"};
+        List<String> ujibenchmark = Arrays.asList(benchmark);
+        
+        String pilihan[] = {"2", "02", "random"};
         List<String> pilihannya = Arrays.asList(pilihan);
         
         String pilihan1[] = {"2", "02", "user"};
         List<String> pilihannya1 = Arrays.asList(pilihan1);
         
-        System.out.print("Hai, Masukkan Pilihan mu\n 1. Ingin Random Number\n 2. Ingin Inputan User\nInputan Anda : ");
+        System.out.print("Hai, Masukkan Pilihan mu\n 1. Ingin Melakukan Pengujian Kecepatan\n 2. Ingin Nilai Random\n 3. Ingin Inputan User\nInputan Anda : ");
         String pilihanmu = in.nextLine().toLowerCase();
         
-        if(pilihannya.contains(pilihanmu)){   
+        if(ujibenchmark.contains(pilihanmu)){   
+            //BENCHMARK SECTION
+            long start = System.currentTimeMillis();
+            
+            Point[] A = new Point[10000];
+            System.out.println();
+            for (B = 0; B<A.length; B++){
+                x = randomGenerator.nextInt(3000);
+                System.out.println("Titik X ke " +(B+1) + " : " + x);
+                for (C = 0; C<=B;C++){
+                    y = randomGenerator.nextInt(3000);
+                    System.out.println("Titik Y ke " +(B+1) + " : "  + y);
+                    break;
+                }
+                    A[B] = new Point(x, y);
+                    list.add(A[B]);
+                    System.out.println();
+            }
+
+            //bagian menampilkan output
+            System.out.print("The Closest Point is ");
+            List<Point> result = m.mindistance(list);
+            m.display(result);
+            System.out.println("and the distance between the closest points is "+Math.sqrt(m.getDistance(result.get(0), result.get(1))));
+            
+            long end = System.currentTimeMillis();
+            System.out.println("SELISIH WAKTU " + ((end - start)/60) + " milisecond");
+        }
+        else if (pilihannya.contains(pilihanmu)){
             //RANDOM VALUE SECTION
             Point[] A = new Point[1000];
             System.out.println();
