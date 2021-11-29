@@ -1,5 +1,6 @@
 package tugas.dnc.asd;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 public class DNCCLOSESTPAIR {
     
     public static void main(String[] args) {
@@ -22,8 +23,10 @@ public class DNCCLOSESTPAIR {
         
         if(pilihannya.contains(pilihanmu)){   
             //RANDOM VALUE SECTION
-            Point[] A = new Point[1000];
-            System.out.println();
+            System.out.println("\n\n-- WAKTU DIMULAI -- ");
+            long start = System.currentTimeMillis();
+            
+            Point[] A = new Point[10000];
             for (B = 0; B<A.length; B++){
                 x = randomGenerator.nextInt(3000); // 0-2999
                 System.out.println("Titik X ke " +(B+1) + " : " + x);
@@ -39,6 +42,10 @@ public class DNCCLOSESTPAIR {
             mindistance(list);
             System.out.println("Pasangan p terdekat adalah ("+titik1.x+","+titik1.y+") ("+titik2.x+","+titik2.y+") "
                     + "\ndan jarak antara poin yang terdekat tersebut adalah "+ min);
+            
+            System.out.println("\n\n-- WAKTU BERAKHIR -- ");
+            long end = System.currentTimeMillis();
+            System.out.println("SELISIH WAKTU " + ((end - start)/60) + " milisecond");
         }
         else if (pilihannya1.contains(pilihanmu)){
             //USER VALUE SECTION
